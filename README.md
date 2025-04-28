@@ -1,0 +1,1 @@
+# bc-member-table-manager
