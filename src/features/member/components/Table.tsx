@@ -1,11 +1,12 @@
-import React from "react";
-import { Button, Table } from "antd";
+import { Key } from "react";
+import { Button, Table, Dropdown } from "antd";
 import { Checkbox, TableColumnsType, TableProps } from "antd";
 import { generateFilters } from "../utils/filter";
 import MoreOutlined from "../../../shared/components/icons/MoreOutlined.svg?react";
+import type { MenuProps } from "antd";
 
 interface DataType {
-  key: React.Key;
+  key: Key;
   name: string;
   address: string;
   memo: string;
@@ -35,6 +36,24 @@ const data: DataType[] = [
   },
 ];
 
+const items: MenuProps["items"] = [
+  {
+    key: "1",
+    label: "수정",
+    onClick: () => {
+      console.log("수정 clicked");
+    },
+  },
+  {
+    key: "2",
+    label: "삭제",
+    danger: true,
+    onClick: () => {
+      console.log("삭제 clicked");
+    },
+  },
+];
+
 const columns: TableColumnsType<DataType> = [
   {
     title: "이름",
@@ -51,7 +70,7 @@ const columns: TableColumnsType<DataType> = [
     filters: generateFilters(data, "address"),
     onFilter: (value, record) => record.address.includes(value as string),
     filterSearch: true,
-    width: "30%",
+    width: "20%",
   },
   {
     title: "메모",
@@ -66,7 +85,7 @@ const columns: TableColumnsType<DataType> = [
     dataIndex: "createdAt",
     filters: generateFilters(data, "createdAt"),
     onFilter: (value, record) => record.createdAt.includes(value as string),
-    width: "10%",
+    width: "20%",
   },
   {
     title: "직업",
@@ -88,7 +107,11 @@ const columns: TableColumnsType<DataType> = [
   {
     dataIndex: "action",
     width: "10%",
-    render: () => <Button icon={<MoreOutlined />} type="text" />,
+    render: () => (
+      <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
+        <Button icon={<MoreOutlined />} type="text" />
+      </Dropdown>
+    ),
   },
 ];
 
