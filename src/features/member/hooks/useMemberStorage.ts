@@ -1,0 +1,47 @@
+import { useLocalStorageObject } from "../../../shared/hooks/useLocalStorage";
+import { MemberData } from "../types/member.type";
+import { initialMembers } from "../data/initialData";
+
+const STORAGE_TYPE = import.meta.env.VITE_STORAGE || "in-memory";
+const STORAGE_KEY = "members";
+
+export const useMemberStorage = () => {
+  const [members, setMembers] = useLocalStorageObject<MemberData[]>(
+    STORAGE_KEY,
+    initialMembers
+  );
+
+  const addMember = (member: Omit<MemberData, "key">) => {
+    setMembers((prev) => [
+      ...prev,
+      {
+        ...member,
+        key: String(Date.now()),
+      },
+    ]);
+  };
+
+  const updateMember = (key: string, member: Omit<MemberData, "key">) => {
+    setMembers((prev) =>
+      prev.map((item) =>
+        item.key === key
+          ? {
+              ...member,
+              key,
+            }
+          : item
+      )
+    );
+  };
+
+  const deleteMember = (key: string) => {
+    setMembers((prev) => prev.filter((item) => item.key !== key));
+  };
+
+  return {
+    members: STORAGE_TYPE === "local-storage" ? members : initialMembers,
+    addMember,
+    updateMember,
+    deleteMember,
+  };
+};
