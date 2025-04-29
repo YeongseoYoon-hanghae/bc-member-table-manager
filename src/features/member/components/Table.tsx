@@ -3,11 +3,13 @@ import { Checkbox, TableColumnsType, TableProps } from "antd";
 import { generateFilters } from "../utils/filter";
 import MoreOutlined from "../../../shared/components/icons/MoreOutlined.svg?react";
 import type { MenuProps } from "antd";
-import { initialMembers } from "../data/initialData";
 import type { MemberData } from "../types/member.type";
+import dayjs from "dayjs";
 
-interface Props {
-  onOpenModal: (mode: "create" | "edit", record?: MemberData) => void;
+interface MemberTableProps {
+  members: MemberData[];
+  onEdit: (mode: "create" | "edit", record?: MemberData) => void;
+  onDelete: (key: string) => void;
 }
 
 const onChange: TableProps<MemberData>["onChange"] = (
@@ -19,20 +21,18 @@ const onChange: TableProps<MemberData>["onChange"] = (
   console.log("params", pagination, filters, sorter, extra);
 };
 
-const MemberTable = ({ onOpenModal }: Props) => {
+const MemberTable = ({ members, onEdit, onDelete }: MemberTableProps) => {
   const getItems = (record: MemberData): MenuProps["items"] => [
     {
       key: "1",
       label: "수정",
-      onClick: () => onOpenModal("edit", record),
+      onClick: () => onEdit("edit", record),
     },
     {
       key: "2",
       label: "삭제",
       danger: true,
-      onClick: () => {
-        console.log("삭제 clicked");
-      },
+      onClick: () => onDelete(record.key.toString()),
     },
   ];
 
@@ -40,7 +40,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "이름",
       dataIndex: "name",
-      filters: generateFilters(initialMembers, "name"),
+      filters: generateFilters(members, "name"),
       filterMode: "tree",
       filterSearch: true,
       onFilter: (value, record) => record.name.includes(value as string),
@@ -49,7 +49,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "주소",
       dataIndex: "address",
-      filters: generateFilters(initialMembers, "address"),
+      filters: generateFilters(members, "address"),
       onFilter: (value, record) => record.address.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -57,7 +57,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "메모",
       dataIndex: "memo",
-      filters: generateFilters(initialMembers, "memo"),
+      filters: generateFilters(members, "memo"),
       onFilter: (value, record) => record.memo.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -65,16 +65,18 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "가입일",
       dataIndex: "createdAt",
-      filters: generateFilters(initialMembers, "createdAt"),
+      filters: generateFilters(members, "createdAt"),
       onFilter: (value, record) =>
-        record.createdAt.toISOString().includes(value as string),
+        dayjs(record.createdAt)
+          .toISOString()
+          .includes(value as string),
       width: "20%",
-      render: (date: Date) => date.toLocaleDateString(),
+      render: (date: Date | string) => dayjs(date).format("YYYY-MM-DD"),
     },
     {
       title: "직업",
       dataIndex: "job",
-      filters: generateFilters(initialMembers, "job"),
+      filters: generateFilters(members, "job"),
       onFilter: (value, record) => record.job.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -82,7 +84,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "이메일 수신 동의",
       dataIndex: "emailAgree",
-      filters: generateFilters(initialMembers, "emailAgree"),
+      filters: generateFilters(members, "emailAgree"),
       onFilter: (value, record) => record.emailAgree === value,
       filterSearch: true,
       width: "10%",
@@ -115,7 +117,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
         },
       }}
       columns={columns}
-      dataSource={initialMembers}
+      dataSource={members}
       onChange={onChange}
     />
   );

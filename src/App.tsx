@@ -5,6 +5,7 @@ import { useState } from "react";
 import MemberForm from "./features/member/components/MemberForm";
 import dayjs, { Dayjs } from "dayjs";
 import type { MemberData } from "./features/member/types/member.type";
+import { useMemberStorage } from "./features/member/hooks/useMemberStorage";
 
 interface FormValues extends Omit<MemberData, "key" | "createdAt"> {
   createdAt: Dayjs;
@@ -14,6 +15,7 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const { members, addMember, updateMember, deleteMember } = useMemberStorage();
 
   const handleModalOpen = (mode: "create" | "edit", record?: MemberData) => {
     setModalMode(mode);
@@ -38,7 +40,12 @@ const App = () => {
       ...values,
       createdAt: values.createdAt.toDate(),
     };
-    console.log("Form values:", formattedValues);
+
+    if (modalMode === "edit" && form.getFieldValue("key")) {
+      updateMember(form.getFieldValue("key"), formattedValues);
+    } else {
+      addMember(formattedValues);
+    }
     handleModalClose();
   };
 
@@ -55,7 +62,11 @@ const App = () => {
             추가
           </Button>
         </div>
-        <MemberTable onOpenModal={handleModalOpen} />
+        <MemberTable
+          members={members}
+          onEdit={handleModalOpen}
+          onDelete={deleteMember}
+        />
       </div>
 
       <Modal
