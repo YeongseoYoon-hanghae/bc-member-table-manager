@@ -10,9 +10,13 @@ interface DataType {
   name: string;
   address: string;
   memo: string;
-  createdAt: string;
+  createdAt: Date;
   job: string;
   emailAgree: boolean;
+}
+
+interface Props {
+  onOpenModal: (mode: "create" | "edit", record?: DataType) => void;
 }
 
 const data: DataType[] = [
@@ -21,7 +25,7 @@ const data: DataType[] = [
     name: "John Doe",
     address: "서울 강남구",
     memo: "외국인",
-    createdAt: "2024-10-02",
+    createdAt: new Date("2024-10-02"),
     job: "개발자",
     emailAgree: true,
   },
@@ -30,88 +34,9 @@ const data: DataType[] = [
     name: "Foo Bar",
     address: "서울 서초구",
     memo: "한국인",
-    createdAt: "2024-10-01",
+    createdAt: new Date("2024-10-01"),
     job: "PO",
     emailAgree: false,
-  },
-];
-
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: "수정",
-    onClick: () => {
-      console.log("수정 clicked");
-    },
-  },
-  {
-    key: "2",
-    label: "삭제",
-    danger: true,
-    onClick: () => {
-      console.log("삭제 clicked");
-    },
-  },
-];
-
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "이름",
-    dataIndex: "name",
-    filters: generateFilters(data, "name"),
-    filterMode: "tree",
-    filterSearch: true,
-    onFilter: (value, record) => record.name.includes(value as string),
-    width: "10%",
-  },
-  {
-    title: "주소",
-    dataIndex: "address",
-    filters: generateFilters(data, "address"),
-    onFilter: (value, record) => record.address.includes(value as string),
-    filterSearch: true,
-    width: "20%",
-  },
-  {
-    title: "메모",
-    dataIndex: "memo",
-    filters: generateFilters(data, "memo"),
-    onFilter: (value, record) => record.memo.includes(value as string),
-    filterSearch: true,
-    width: "20%",
-  },
-  {
-    title: "가입일",
-    dataIndex: "createdAt",
-    filters: generateFilters(data, "createdAt"),
-    onFilter: (value, record) => record.createdAt.includes(value as string),
-    width: "20%",
-  },
-  {
-    title: "직업",
-    dataIndex: "job",
-    filters: generateFilters(data, "job"),
-    onFilter: (value, record) => record.job.includes(value as string),
-    filterSearch: true,
-    width: "20%",
-  },
-  {
-    title: "이메일 수신 동의",
-    dataIndex: "emailAgree",
-    filters: generateFilters(data, "emailAgree"),
-    onFilter: (value, record) => record.emailAgree === value,
-    filterSearch: true,
-    width: "10%",
-    render: (value) => <Checkbox checked={value} />,
-  },
-  {
-    dataIndex: "action",
-    width: "10%",
-    render: () => (
-      <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
-        <Button icon={<MoreOutlined />} type="text" />
-      </Dropdown>
-    ),
   },
 ];
 
@@ -124,7 +49,90 @@ const onChange: TableProps<DataType>["onChange"] = (
   console.log("params", pagination, filters, sorter, extra);
 };
 
-const MemberTable = () => {
+const MemberTable = ({ onOpenModal }: Props) => {
+  const getItems = (record: DataType): MenuProps["items"] => [
+    {
+      key: "1",
+      label: "수정",
+      onClick: () => onOpenModal("edit", record),
+    },
+    {
+      key: "2",
+      label: "삭제",
+      danger: true,
+      onClick: () => {
+        console.log("삭제 clicked");
+      },
+    },
+  ];
+
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "이름",
+      dataIndex: "name",
+      filters: generateFilters(data, "name"),
+      filterMode: "tree",
+      filterSearch: true,
+      onFilter: (value, record) => record.name.includes(value as string),
+      width: "10%",
+    },
+    {
+      title: "주소",
+      dataIndex: "address",
+      filters: generateFilters(data, "address"),
+      onFilter: (value, record) => record.address.includes(value as string),
+      filterSearch: true,
+      width: "20%",
+    },
+    {
+      title: "메모",
+      dataIndex: "memo",
+      filters: generateFilters(data, "memo"),
+      onFilter: (value, record) => record.memo.includes(value as string),
+      filterSearch: true,
+      width: "20%",
+    },
+    {
+      title: "가입일",
+      dataIndex: "createdAt",
+      filters: generateFilters(data, "createdAt"),
+      onFilter: (value, record) =>
+        record.createdAt.toISOString().includes(value as string),
+      width: "20%",
+      render: (date: Date) => date.toLocaleDateString(),
+    },
+    {
+      title: "직업",
+      dataIndex: "job",
+      filters: generateFilters(data, "job"),
+      onFilter: (value, record) => record.job.includes(value as string),
+      filterSearch: true,
+      width: "20%",
+    },
+    {
+      title: "이메일 수신 동의",
+      dataIndex: "emailAgree",
+      filters: generateFilters(data, "emailAgree"),
+      onFilter: (value, record) => record.emailAgree === value,
+      filterSearch: true,
+      width: "10%",
+      render: (value) => <Checkbox checked={value} />,
+    },
+    {
+      dataIndex: "action",
+      width: "10%",
+      render: (_, record) => (
+        <Dropdown
+          menu={{ items: getItems(record) }}
+          trigger={["click"]}
+          placement="bottomRight"
+        >
+          <Button icon={<MoreOutlined />} type="text" />
+        </Dropdown>
+      ),
+    },
+  ];
+
   return (
     <Table<DataType>
       rowSelection={{
@@ -143,4 +151,4 @@ const MemberTable = () => {
   );
 };
 
-export default MemberTable;
+export { MemberTable, type DataType };
