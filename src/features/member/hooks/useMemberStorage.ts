@@ -1,15 +1,24 @@
 import { useLocalStorageObject } from "../../../shared/hooks/useLocalStorage";
 import { MemberData } from "../types/member.type";
 import { initialMembers } from "../data/initialData";
+import { useState } from "react";
 
 const STORAGE_TYPE = import.meta.env.VITE_STORAGE || "in-memory";
 const STORAGE_KEY = "members";
 
 export const useMemberStorage = () => {
-  const [members, setMembers] = useLocalStorageObject<MemberData[]>(
-    STORAGE_KEY,
-    initialMembers
-  );
+  const [localStorageMembers, setLocalStorageMembers] = useLocalStorageObject<
+    MemberData[]
+  >(STORAGE_KEY, initialMembers);
+  const [inMemoryMembers, setInMemoryMembers] =
+    useState<MemberData[]>(initialMembers);
+
+  const members =
+    STORAGE_TYPE === "local-storage" ? localStorageMembers : inMemoryMembers;
+  const setMembers =
+    STORAGE_TYPE === "local-storage"
+      ? setLocalStorageMembers
+      : setInMemoryMembers;
 
   const addMember = (member: Omit<MemberData, "key">) => {
     setMembers((prev) => [
@@ -45,7 +54,7 @@ export const useMemberStorage = () => {
   };
 
   return {
-    members: STORAGE_TYPE === "local-storage" ? members : initialMembers,
+    members,
     addMember,
     updateMember,
     deleteMember,
