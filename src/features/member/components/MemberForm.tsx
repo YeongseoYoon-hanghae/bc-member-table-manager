@@ -55,7 +55,7 @@ const MemberForm = ({ form, onFinish }: MemberFormProps) => {
       </Form.Item>
 
       <Form.Item name="job" label="직업">
-        <Select>
+        <Select defaultValue="개발자">
           <Select.Option value="개발자">개발자</Select.Option>
           <Select.Option value="PO">PO</Select.Option>
           <Select.Option value="디자이너">디자이너</Select.Option>
