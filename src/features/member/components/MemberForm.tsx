@@ -22,16 +22,27 @@ const MemberForm = ({ form, onFinish }: MemberFormProps) => {
       <Form.Item
         name="name"
         label="이름"
-        rules={[{ required: true, message: "이름을 입력해주세요" }]}
+        rules={[
+          { required: true, message: "이름을 입력해주세요" },
+          { max: 20, message: "20글자를 초과할 수 없습니다" },
+        ]}
       >
         <Input />
       </Form.Item>
 
-      <Form.Item name="address" label="주소">
+      <Form.Item
+        name="address"
+        label="주소"
+        rules={[{ max: 20, message: "20글자를 초과할 수 없습니다" }]}
+      >
         <Input />
       </Form.Item>
 
-      <Form.Item name="memo" label="메모">
+      <Form.Item
+        name="memo"
+        label="메모"
+        rules={[{ max: 50, message: "50글자를 초과할 수 없습니다" }]}
+      >
         <Input.TextArea />
       </Form.Item>
 
