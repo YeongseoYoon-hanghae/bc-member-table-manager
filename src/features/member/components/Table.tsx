@@ -1,46 +1,16 @@
-import { Key } from "react";
 import { Button, Table, Dropdown } from "antd";
 import { Checkbox, TableColumnsType, TableProps } from "antd";
 import { generateFilters } from "../utils/filter";
 import MoreOutlined from "../../../shared/components/icons/MoreOutlined.svg?react";
 import type { MenuProps } from "antd";
-
-interface DataType {
-  key: Key;
-  name: string;
-  address: string;
-  memo: string;
-  createdAt: Date;
-  job: string;
-  emailAgree: boolean;
-}
+import { initialMembers } from "../data/initialData";
+import type { MemberData } from "../types/member.type";
 
 interface Props {
-  onOpenModal: (mode: "create" | "edit", record?: DataType) => void;
+  onOpenModal: (mode: "create" | "edit", record?: MemberData) => void;
 }
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Doe",
-    address: "서울 강남구",
-    memo: "외국인",
-    createdAt: new Date("2024-10-02"),
-    job: "개발자",
-    emailAgree: true,
-  },
-  {
-    key: "2",
-    name: "Foo Bar",
-    address: "서울 서초구",
-    memo: "한국인",
-    createdAt: new Date("2024-10-01"),
-    job: "PO",
-    emailAgree: false,
-  },
-];
-
-const onChange: TableProps<DataType>["onChange"] = (
+const onChange: TableProps<MemberData>["onChange"] = (
   pagination,
   filters,
   sorter,
@@ -50,7 +20,7 @@ const onChange: TableProps<DataType>["onChange"] = (
 };
 
 const MemberTable = ({ onOpenModal }: Props) => {
-  const getItems = (record: DataType): MenuProps["items"] => [
+  const getItems = (record: MemberData): MenuProps["items"] => [
     {
       key: "1",
       label: "수정",
@@ -66,11 +36,11 @@ const MemberTable = ({ onOpenModal }: Props) => {
     },
   ];
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<MemberData> = [
     {
       title: "이름",
       dataIndex: "name",
-      filters: generateFilters(data, "name"),
+      filters: generateFilters(initialMembers, "name"),
       filterMode: "tree",
       filterSearch: true,
       onFilter: (value, record) => record.name.includes(value as string),
@@ -79,7 +49,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "주소",
       dataIndex: "address",
-      filters: generateFilters(data, "address"),
+      filters: generateFilters(initialMembers, "address"),
       onFilter: (value, record) => record.address.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -87,7 +57,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "메모",
       dataIndex: "memo",
-      filters: generateFilters(data, "memo"),
+      filters: generateFilters(initialMembers, "memo"),
       onFilter: (value, record) => record.memo.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -95,7 +65,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "가입일",
       dataIndex: "createdAt",
-      filters: generateFilters(data, "createdAt"),
+      filters: generateFilters(initialMembers, "createdAt"),
       onFilter: (value, record) =>
         record.createdAt.toISOString().includes(value as string),
       width: "20%",
@@ -104,7 +74,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "직업",
       dataIndex: "job",
-      filters: generateFilters(data, "job"),
+      filters: generateFilters(initialMembers, "job"),
       onFilter: (value, record) => record.job.includes(value as string),
       filterSearch: true,
       width: "20%",
@@ -112,7 +82,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
     {
       title: "이메일 수신 동의",
       dataIndex: "emailAgree",
-      filters: generateFilters(data, "emailAgree"),
+      filters: generateFilters(initialMembers, "emailAgree"),
       onFilter: (value, record) => record.emailAgree === value,
       filterSearch: true,
       width: "10%",
@@ -134,7 +104,7 @@ const MemberTable = ({ onOpenModal }: Props) => {
   ];
 
   return (
-    <Table<DataType>
+    <Table<MemberData>
       rowSelection={{
         onChange: (selectedRowKeys, selectedRows) => {
           console.log(
@@ -145,10 +115,11 @@ const MemberTable = ({ onOpenModal }: Props) => {
         },
       }}
       columns={columns}
-      dataSource={data}
+      dataSource={initialMembers}
       onChange={onChange}
     />
   );
 };
 
-export { MemberTable, type DataType };
+export { MemberTable };
+export type { MemberData };

@@ -1,11 +1,12 @@
-import { MemberTable, type DataType } from "./features/member/components/Table";
+import { MemberTable } from "./features/member/components/Table";
 import { Button, Modal, Form } from "antd";
 import PlusOutlined from "./shared/components/icons/PlusOutlined.svg?react";
 import { useState } from "react";
 import MemberForm from "./features/member/components/MemberForm";
 import dayjs, { Dayjs } from "dayjs";
+import type { MemberData } from "./features/member/types/member.type";
 
-interface FormValues extends Omit<DataType, "key" | "createdAt"> {
+interface FormValues extends Omit<MemberData, "key" | "createdAt"> {
   createdAt: Dayjs;
 }
 
@@ -14,7 +15,7 @@ const App = () => {
   const [form] = Form.useForm();
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
 
-  const handleModalOpen = (mode: "create" | "edit", record?: DataType) => {
+  const handleModalOpen = (mode: "create" | "edit", record?: MemberData) => {
     setModalMode(mode);
     setIsModalOpen(true);
     if (mode === "edit" && record) {
@@ -33,7 +34,7 @@ const App = () => {
   };
 
   const handleSubmit = (values: FormValues) => {
-    const formattedValues: Omit<DataType, "key"> = {
+    const formattedValues: Omit<MemberData, "key"> = {
       ...values,
       createdAt: values.createdAt.toDate(),
     };

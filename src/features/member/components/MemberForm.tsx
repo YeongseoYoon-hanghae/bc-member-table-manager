@@ -1,9 +1,9 @@
 import { Form, Input, DatePicker, Select, Checkbox } from "antd";
 import { FormInstance } from "antd/lib/form";
-import { DataType } from "./Table";
+import { MemberData } from "../types/member.type";
 import { Dayjs } from "dayjs";
 
-interface FormValues extends Omit<DataType, "key" | "createdAt"> {
+interface FormValues extends Omit<MemberData, "key" | "createdAt"> {
   createdAt: Dayjs;
 }
 
