@@ -15,7 +15,9 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
-  const { members, addMember, updateMember, deleteMember } = useMemberStorage();
+  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+  const { members, addMember, updateMember, deleteMember, deleteMembers } =
+    useMemberStorage();
 
   const handleModalOpen = (mode: "create" | "edit", record?: MemberData) => {
     setModalMode(mode);
@@ -54,18 +56,36 @@ const App = () => {
       <div className="bg-white rounded-lg shadow">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-medium text-gray-800">회원 목록</h2>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => handleModalOpen("create")}
-          >
-            추가
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => handleModalOpen("create")}
+            >
+              추가
+            </Button>
+            <Button
+              type="default"
+              danger
+              onClick={() => {
+                if (selectedKeys.length > 0) {
+                  deleteMembers(selectedKeys.map(String));
+                  setSelectedKeys([]);
+                }
+              }}
+              disabled={selectedKeys.length === 0}
+            >
+              선택 삭제
+            </Button>
+          </div>
         </div>
         <MemberTable
           members={members}
           onEdit={handleModalOpen}
           onDelete={deleteMember}
+          onDeleteSelected={deleteMembers}
+          selectedKeys={selectedKeys}
+          onSelectedKeysChange={setSelectedKeys}
         />
       </div>
 

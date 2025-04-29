@@ -1,5 +1,5 @@
 import { Button, Table, Dropdown } from "antd";
-import { Checkbox, TableColumnsType, TableProps } from "antd";
+import { Checkbox, TableColumnsType } from "antd";
 import { generateFilters } from "../utils/filter";
 import MoreOutlined from "../../../shared/components/icons/MoreOutlined.svg?react";
 import type { MenuProps } from "antd";
@@ -10,18 +10,18 @@ interface MemberTableProps {
   members: MemberData[];
   onEdit: (mode: "create" | "edit", record?: MemberData) => void;
   onDelete: (key: string) => void;
+  onDeleteSelected: (keys: string[]) => void;
+  selectedKeys: React.Key[];
+  onSelectedKeysChange: (keys: React.Key[]) => void;
 }
 
-const onChange: TableProps<MemberData>["onChange"] = (
-  pagination,
-  filters,
-  sorter,
-  extra
-) => {
-  console.log("params", pagination, filters, sorter, extra);
-};
-
-const MemberTable = ({ members, onEdit, onDelete }: MemberTableProps) => {
+const MemberTable = ({
+  members,
+  onEdit,
+  onDelete,
+  selectedKeys,
+  onSelectedKeysChange,
+}: MemberTableProps) => {
   const getItems = (record: MemberData): MenuProps["items"] => [
     {
       key: "1",
@@ -106,20 +106,18 @@ const MemberTable = ({ members, onEdit, onDelete }: MemberTableProps) => {
   ];
 
   return (
-    <Table<MemberData>
-      rowSelection={{
-        onChange: (selectedRowKeys, selectedRows) => {
-          console.log(
-            `selectedRowKeys: ${selectedRowKeys}`,
-            "selectedRows: ",
-            selectedRows
-          );
-        },
-      }}
-      columns={columns}
-      dataSource={members}
-      onChange={onChange}
-    />
+    <div>
+      <Table<MemberData>
+        rowSelection={{
+          selectedRowKeys: selectedKeys,
+          onChange: (newSelectedRowKeys) => {
+            onSelectedKeysChange(newSelectedRowKeys);
+          },
+        }}
+        columns={columns}
+        dataSource={members}
+      />
+    </div>
   );
 };
 

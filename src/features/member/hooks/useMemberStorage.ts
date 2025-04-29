@@ -38,10 +38,17 @@ export const useMemberStorage = () => {
     setMembers((prev) => prev.filter((item) => item.key !== key));
   };
 
+  const deleteMembers = (keys: string[]) => {
+    setMembers((prev) =>
+      prev.filter((item) => !keys.includes(String(item.key)))
+    );
+  };
+
   return {
     members: STORAGE_TYPE === "local-storage" ? members : initialMembers,
     addMember,
     updateMember,
     deleteMember,
+    deleteMembers,
   };
 };
